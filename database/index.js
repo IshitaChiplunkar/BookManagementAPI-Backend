@@ -41,7 +41,7 @@ let publications=[
     },
     {
         id:2,
-        name:"Jaico",
+        name:"Navratna",
         books:["12345TWO"],
     },
 ];
