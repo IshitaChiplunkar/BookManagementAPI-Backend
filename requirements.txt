@@ -1,0 +1,67 @@
+we are a company that handles book publications
+
+book ---> ISBN(International standard book no.),Title,Author[],Language,Pub date,Num of pages,Category[]
+
+Authors ---> Name,ID,Books[]
+
+Publications ---> Name,ID,Books[]
+
+Requirements
+
+1. For books-
+// GET Method
+   a. We need an API to get all books ✅
+   b. to get specific book based on ISBN ✅
+   c. to get a list of books based on category ✅
+   d. to get a list of books based on author ✅
+
+// POST Method
+   a. New book ✅
+
+// PUT Method
+   a. Update book details ✅
+   b. update / add new author ✅
+
+// DELETE Method
+   a. delete a book ✅
+   b. delete an author from the book ✅
+
+
+
+2. For Author-
+// GET Method
+   a. We need an API to get all authors ✅
+   b. to get specific author based on their id ✅
+   c. to get a list of authors based on a book ✅  
+
+// POST Method
+   a. Add new author ✅ 
+
+// PUT Method
+   a. Update Author details ✅
+
+// DELETE Method
+   a. Delete an author ✅
+
+
+
+3. For Publication-
+// GET Method
+   a. We need an API to get all publications ✅
+   b. to get specific publication based on id ✅
+   c. to get a list of publications based on a book ✅
+
+// POST Method
+   a. Add new publication ✅ 
+
+// PUT Method
+   a. Update publication details  ✅ 
+   b. Update / add new book to a publication ✅ 
+
+// DELETE Method
+   a. Delete a book from publication ✅ 
+   b. Delete a publication ✅
+
+
+
+// How the server serves the request
