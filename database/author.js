@@ -1,4 +1,4 @@
-const mongoose=require("mongoose")
+const mongoose=require("mongoose");
 
 //Author Schema
 const AuthorSchema=mongoose.Schema({
@@ -8,6 +8,6 @@ const AuthorSchema=mongoose.Schema({
 });
 
 //Create an author model
-const AuthorModel = mongoose.model(AuthorSchema);
+const AuthorModels = mongoose.model("authors",AuthorSchema);
 
-module.exports=AuthorModel;
+module.exports=AuthorModels;
