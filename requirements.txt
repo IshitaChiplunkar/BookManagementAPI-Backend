@@ -10,13 +10,13 @@ Requirements
 
 1. For books-
 // GET Method
-   a. We need an API to get all books ✅✅
-   b. to get specific book based on ISBN ✅✅
-   c. to get a list of books based on category ✅✅
-   d. to get a list of books based on author id ✅✅
+   a. We need an API to get all books ✅
+   b. to get specific book based on ISBN ✅
+   c. to get a list of books based on category ✅
+   d. to get a list of books based on author id ✅
 
 // POST Method
-   a. Add new book ✅✅
+   a. Add new book ✅
 
 // PUT Method
    a. Update book details ✅
@@ -24,18 +24,18 @@ Requirements
 
 // DELETE Method
    a. delete a book ✅
-   b. delete an author from the book ✅
+   b. delete an author from a book ✅
 
 
 
 2. For Author-
 // GET Method
-   a. We need an API to get all authors ✅✅
-   b. to get specific author based on their id ✅✅
-   c. to get a list of authors based on a book ✅✅ 
+   a. We need an API to get all authors ✅
+   b. to get specific author based on their id ✅
+   c. to get a list of authors based on a book ✅
 
 // POST Method
-   a. Add new author ✅✅ 
+   a. Add new author ✅
 
 // PUT Method
    a. Update Author details ✅
@@ -47,19 +47,19 @@ Requirements
 
 3. For Publication-
 // GET Method
-   a. We need an API to get all publications ✅✅
-   b. to get specific publication based on id ✅✅
-   c. to get a list of publications based on a book ✅✅
+   a. We need an API to get all publications ✅
+   b. to get specific publication based on id ✅
+   c. to get a list of publications based on a book ✅
 
 // POST Method
-   a. Add new publication ✅✅ 
+   a. Add new publication ✅
 
 // PUT Method
-   a. Update publication details  ✅ 
-   b. Update / add new book to a publication ✅ 
+   a. Update publication details ✅ 
+   b. Update / add new book  ✅
 
 // DELETE Method
-   a. Delete a book from publication ✅ 
+   a. Delete a book from publication ✅
    b. Delete a publication ✅
 
 

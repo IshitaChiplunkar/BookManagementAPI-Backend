@@ -65,7 +65,7 @@ shapeAI.get("/is/:isbn",async (req,res) =>{
 
 /*
 Route---->    /c
-Description---> to get specific book based on  categorgy
+Description---> to get specific book based on categorgy
 Access---> public
 Parameters---> category
 Method---> GET
@@ -85,7 +85,7 @@ shapeAI.get("/c/:category",async (req,res)=>{
 
 /*
 Route---->    /b
-Description---> to get list of books based on a author
+Description---> to get list of books based on a author id
 Access---> public
 Parameters---> authorId
 Method---> GET
@@ -105,7 +105,7 @@ shapeAI.get("/b/:authorId",async (req,res) =>{
 
 /*
 Route---->    /book/new
-Description---> to add new books
+Description---> to add new book
 Access---> public
 Parameters---> none
 Method---> POST
@@ -113,7 +113,7 @@ Method---> POST
 shapeAI.post("/book/new",async (req,res)=>{
     const {newBook}=req.body;
     BookModel.create(newBook);
-    return res.json({message:"Book was added!"})
+    return res.json({message:"New book was added!"})
 });
 
 
@@ -125,14 +125,19 @@ Access---> public
 Parameters---> isbn
 Method---> PUT
 */
-shapeAI.put("/book/update/:isbn",(req,res)=>{
-    database.books.forEach((book)=>{
-        if(book.ISBN===req.params.isbn){
-            book.title=req.body.bookTitle;
-            return;
+shapeAI.put("/book/update/:isbn", async (req,res)=>{
+    const updatedBook= await BookModel.findOneAndUpdate(
+        {
+            ISBN:req.params.isbn
+        },
+        {
+            title:req.body.bookTitle
+        },
+        {
+            new:true     //to get updated data in postman
         }
-    });
-    return res.json({books:database.books});
+    );
+    return res.json({book:updatedBook});
 });
 
 
@@ -143,20 +148,40 @@ Access---> public
 Parameters---> isbn
 Method---> PUT
 */
-shapeAI.put("/book/author/update/:isbn",(req,res)=>{
+shapeAI.put("/book/author/update/:isbn", async (req,res)=>{
     //update the book database
-    database.books.forEach((book)=>{
-        if(book.ISBN===req.params.isbn){
-            return book.authors.push(req.body.newAuthor);
+    const updatedBook= await BookModel.findOneAndUpdate(
+        {
+            ISBN: req.params.isbn
+        },
+        {
+            $addToSet:{
+                authors:req.body.newAuthor
+            },
+        },
+        {
+            new:true
         }
-    });
+    );
     //update the author database
-    database.authors.forEach((author)=>{
-        if(author.id===req.body.newAuthor){
-            return author.books.push(req.params.isbn);
+    const updatedAuthor= await AuthorModel.findOneAndUpdate(
+        {
+            id:req.body.newAuthor
+        },
+        {
+            $addToSet:{
+                books:req.params.isbn
+            },
+        },
+        {
+            new:true
         }
+    );
+    return res.json({
+        books:updatedBook,
+        authors:updatedAuthor,
+        message:"New author was added to the book"
     });
-    return res.json({books:database.books,authors:database.authors,message:"New author was added"});
 });
 
 
@@ -167,12 +192,13 @@ Access---> public
 Parameters---> isbn
 Method---> DELETE
 */
-shapeAI.delete("/book/delete/:isbn",(req,res)=>{
-    const updatedBookDatabase=database.books.filter(
-        (book)=>book.ISBN!==req.params.isbn
+shapeAI.delete("/book/delete/:isbn",async(req,res)=>{
+    const updatedBookDatabase=await BookModel.findOneAndDelete(
+        {
+            ISBN:req.params.isbn
+        }
     );
-    database.books=updatedBookDatabase;
-    return res.json({books:database.books});
+    return res.json({books:updatedBookDatabase});
 });
 
 
@@ -183,27 +209,40 @@ Access---> public
 Parameters---> isbn,author
 Method---> DELETE
 */
-shapeAI.delete("/book/delete/author/:isbn/:authorId",(req,res)=>{
-    database.books.forEach((book)=>{
-        if(book.ISBN===req.params.isbn){
-            const newAuthorList=book.authors.filter(
-                (author)=>author!==parseInt(req.params.authorId)
-            );
-            book.authors=newAuthorList;
-            return;
-        };
-    });
+shapeAI.delete("/book/delete/author/:isbn/:authorId",async(req,res)=>{
+    //delete an author from a book
+    const updatedBook= await BookModel.findOneAndUpdate(
+        {
+            ISBN:req.params.isbn
+        },
+        {
+            $pull:{
+                authors:parseInt(req.params.authorId)
+            }
+        },
+        {
+            new:true
+        }
+    );
     //update the author database
-    database.authors.forEach((author)=>{
-        if(author.id===parseInt(req.params.authorId)){
-            const newBookList=author.books.filter(
-                (book)=>book!==req.params.isbn
-            );
-            author.books=newBookList;
-            return;
-        };
+    const updatedAuthor= await AuthorModel.findOneAndUpdate(
+        {
+            id:parseInt(req.params.authorId)
+        },
+        {
+            $pull:{
+                books:req.params.isbn
+            }
+        },
+        {
+            new:true
+        }
+    );
+    return res.json({
+        book:updatedBook,
+        author:updatedAuthor,
+        message:"Author was deleted from the book"
     });
-return res.json({book:database.books,author:database.authors,message:"Author was deleted"});
 });
 
 
@@ -223,7 +262,7 @@ shapeAI.get("/authors",async (req,res) => {
 
 
 /*
-Route---->    /auth/:id
+Route---->    /auth
 Description---> to get specific author based on their id
 Access---> public
 Parameters---> id
@@ -243,7 +282,7 @@ shapeAI.get("/auth/:id",async (req,res) =>{
 
 
 /*
-Route---->    /author
+Route---->    /authors
 Description---> to get list of all authors based on book
 Access---> public
 Parameters---> isbn
@@ -283,14 +322,19 @@ Access---> public
 Parameters---> id
 Method---> PUT
 */
-shapeAI.put("/author/update/:id",(req,res)=>{
-    database.authors.forEach((author)=>{
-        if(author.id===parseInt(req.params.id)){
-            author.name=req.body.authorName;
-            return;
+shapeAI.put("/author/update/:id", async (req,res)=>{
+    const updatedAuthor= await AuthorModel.findOneAndUpdate(
+        {
+            id:parseInt(req.params.id)
+        },
+        {
+            name:req.body.authorName
+        },
+        {
+            new:true     //to get updated data in postman
         }
-    });
-    return res.json({authors:database.authors});
+    );
+    return res.json({author:updatedAuthor});
 });
 
 
@@ -301,12 +345,13 @@ Access---> public
 Parameters---> id
 Method---> DELETE
 */
-shapeAI.delete("/author/delete/:id",(req,res)=>{
-    const updatedAuthorDatabase=database.authors.filter(
-        (author)=>author.id!==parseInt(req.params.id)
+shapeAI.delete("/author/delete/:id",async(req,res)=>{
+    const updatedAuthorDatabase=await AuthorModel.findOneAndDelete(
+        {
+            id:parseInt(req.params.id)
+        }
     );
-    database.authors=updatedAuthorDatabase;
-    return res.json({authors:database.authors});
+    return res.json({authors:updatedAuthorDatabase});
 });
 
 
@@ -346,7 +391,7 @@ shapeAI.get("/pub/:id",async (req,res) =>{
 
 
 /*
-Route---->    /publications/:isbn
+Route---->    /publication
 Description---> to get list of all publications based on a book
 Access---> public
 Parameters---> isbn
@@ -387,15 +432,21 @@ Access---> public
 Parameters---> id
 Method---> PUT
 */
-shapeAI.put("/publication/update/:id",(req,res)=>{
-    database.publications.forEach((publication)=>{
-        if(publication.id===parseInt(req.params.id)){
-            publication.name=req.body.publicationName;
-            return;
+shapeAI.put("/publication/update/:id", async (req,res)=>{
+    const updatedPublication= await PublicationModel.findOneAndUpdate(
+        {
+            id:parseInt(req.params.id)
+        },
+        {
+            name:req.body.publicationName
+        },
+        {
+            new:true     //to get updated data in postman
         }
-    });
-    return res.json({publication:database.publications});
+    );
+    return res.json({publication:updatedPublication});
 });
+
 
 
 /*
@@ -405,21 +456,38 @@ Access---> public
 Parameters---> isbn
 Method---> PUT
 */
-shapeAI.put("/publication/update/book/:isbn",(req,res)=>{
+shapeAI.put("/publication/update/book/:id", async (req,res)=>{
     //update the publication database
-    database.publications.forEach((publication)=>{
-        if(publication.id===req.body.pubId){
-            return publication.books.push(req.params.isbn);
+    const updatedPublication= await PublicationModel.findOneAndUpdate(
+        {
+            id: parseInt(req.params.id)
+        },
+        {
+            $addToSet:{
+                books:req.body.newBook
+            },
+        },
+        {
+            new:true
         }
-    });
-    //update book database
-    database.books.forEach((book)=>{
-        if(book.ISBN===req.params.isbn){
-            book.publication=req.body.pubId;
-            return;
+    );
+    //update the book database
+    const updatedBook= await BookModel.findOneAndUpdate(
+        {
+            ISBN:req.body.newBook
+        },
+        {
+            publication:parseInt(req.params.id)   
+        },
+        {
+            new:true
         }
+    );
+    return res.json({
+        publications:updatedPublication,
+        books:updatedBook,
+        message:"New book was added to the publication"
     });
-    return res.json({books:database.books,publications:database.publications,message:"Successfully updated publication"});
 });
 
 
@@ -430,25 +498,38 @@ Access---> public
 Parameters---> isbn,pubId
 Method---> DELETE
 */
-shapeAI.delete("/publication/delete/book/:isbn/:pubId",(req,res)=>{
-    //update publication database
-    database.publications.forEach((publication)=>{
-        if(publication.id===parseInt(req.params.pubId)){
-            const newBooksList=publication.books.filter(
-                (book)=>book!==req.params.isbn
-            );
-            publication.books=newBooksList;
-            return;
+shapeAI.delete("/publication/delete/book/:isbn/:pubId",async(req,res)=>{
+    //delete a book from publication
+    const updatedPublication= await PublicationModel.findOneAndUpdate(
+        {
+            id:parseInt(req.params.pubId)
+        },
+        {
+            $pull:{
+                books:req.params.isbn
+            }
+        },
+        {
+            new:true
         }
-    });
-    //update book database
-    database.books.forEach((book)=>{
-        if(book.ISBN===req.params.isbn){
-            book.publication=0;   //means no publication available
-            return;
+    );
+    //update the book database
+    const updatedBook= await BookModel.findOneAndUpdate(
+        {
+            ISBN:req.params.isbn
+        },
+        {
+            publication:0
+        },
+        {
+            new:true
         }
+    );
+    return res.json({
+        publication:updatedPublication,
+        book:updatedBook,
+        message:"Book was deleted from the publication"
     });
-    return res.json({books:database.books,publications:database.publications})
 });
 
 
@@ -459,12 +540,14 @@ Access---> public
 Parameters---> id
 Method---> DELETE
 */
-shapeAI.delete("/publication/delete/:id",(req,res)=>{
-    const updatedPublicationDatabase=database.publications.filter(
-        (publication)=>publication.id!==parseInt(req.params.id)
+shapeAI.delete("/publication/delete/:id",async(req,res)=>{
+    const updatedPublicationDatabase=await PublicationModel.findOneAndDelete(
+        {
+            id:parseInt(req.params.id)
+        }
     );
-    database.publications=updatedPublicationDatabase;
-    return res.json({publications:database.publications});
+    return res.json({publications:updatedPublicationDatabase});
 });
+
 
 shapeAI.listen(3000,() => console.log("Server running!!"));
