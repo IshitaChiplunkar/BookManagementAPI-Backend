@@ -1,6 +1,5 @@
 const mongoose=require("mongoose");
 
-
 //Author Schema
 const AuthorSchema=mongoose.Schema({
     id: {
