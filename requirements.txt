@@ -62,5 +62,3 @@ Requirements
    a. Delete a book from publication ✅
    b. Delete a publication ✅
 
-
-// How to server serves the request?
