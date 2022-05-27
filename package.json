@@ -9,10 +9,17 @@
   "license": "ISC",
   "dependencies": {
     "dotenv": "^10.0.0",
-    "express": "^4.17.1",
-    "mongoose": "^5.13.2",
-    "nodemon": "^2.0.9"
+    "express": "^4.18.1",
+    "mongoose": "^5.13.14",
+    "nodemon": "^2.0.16"
   },
-  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IshitaChiplunkar/Book_Management_API_Project_-Backend-.git"
+  },
+  "bugs": {
+    "url": "https://github.com/IshitaChiplunkar/Book_Management_API_Project_-Backend-/issues"
+  },
+  "homepage": "https://github.com/IshitaChiplunkar/Book_Management_API_Project_-Backend-#readme",
   "description": ""
 }
