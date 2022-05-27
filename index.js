@@ -13,7 +13,7 @@ const Publications=require("./API/Publication");
 
 
 // Initializing express
-const shapeAI= express();
+const shapeAI= express();;
 
 
 // Configurations
